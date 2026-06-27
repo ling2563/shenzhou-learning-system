@@ -553,7 +553,15 @@ initCats(); startSession();
 src="https://static.cloudflareinsights.com/beacon.min.js"
 data-cf-beacon='{"token":"d560d5aa815e4488b522eb63c03bd44b1"}'></script>
 <!-- End Cloudflare Web Analytics -->
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>
+window.addEventListener("load", function(){
+  setTimeout(function(){
+    var pv = document.getElementById("busuanzi_value_site_pv");
+    if (pv && !pv.textContent.trim()) pv.textContent = "尚未載入";
+  }, 4000);
+});
+</script>
 
 
 
