@@ -45,10 +45,6 @@
 }
 @media (max-width:880px){.workspace-card{min-height:0}.workspace-body{max-height:none;overflow:visible}}
 
-.updateNotice{background:#fff7e8;border:1px solid #e8cfa8;border-radius:14px;padding:12px;line-height:1.65;color:#4f3219}
-.updateNotice summary{cursor:pointer;font-weight:700;color:var(--accent)}
-.updateNotice ul{margin:8px 0 0 20px;padding:0}
-.updateNotice li{margin:3px 0}
 .pill.new{color:var(--blue);border-color:#a9bdcf;background:#f1f7fb}
 
 </style>
@@ -60,15 +56,6 @@
 <aside>
   <div class="card controls">
     <div class="safe small">同學私人複習用版本。請勿公開上傳、販售、改作商業用途或大量轉傳。</div>
-    <details class="updateNotice" open>
-      <summary>📢 v2.2 題庫更新｜2026/06/27</summary>
-      <ul>
-        <li>修正未滿 3 歲幼兒：僅建議芳香浴法（擴香）。</li>
-        <li>修正一51：答案採「邊緣系統」。</li>
-        <li>更新一22、二23、二53、二13 題目文字與選項。</li>
-        <li>新增嗅覺傳遞三路徑與 AEAJ 背誦口訣。</li>
-      </ul>
-    </details>
     <select id="sourceFilter" onchange="startSession()"><option value="全部">全部題庫</option><option>練習問題①</option><option>練習問題②</option><option>練習問題③</option></select>
     <select id="catFilter" onchange="startSession()"><option value="全部">全部主題</option></select>
     <select id="mode" onchange="startSession()">
@@ -534,10 +521,6 @@ function exportExam(count){
 }
 @media (max-width:880px){.workspace-card{min-height:0}.workspace-body{max-height:none;overflow:visible}}
 
-.updateNotice{background:#fff7e8;border:1px solid #e8cfa8;border-radius:14px;padding:12px;line-height:1.65;color:#4f3219}
-.updateNotice summary{cursor:pointer;font-weight:700;color:var(--accent)}
-.updateNotice ul{margin:8px 0 0 20px;padding:0}
-.updateNotice li{margin:3px 0}
 .pill.new{color:var(--blue);border-color:#a9bdcf;background:#f1f7fb}
 
 </style>
