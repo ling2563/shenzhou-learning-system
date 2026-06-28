@@ -306,12 +306,18 @@ function memoryNote(q){
   if(!notes.length) notes.push(`本題答案：${ans}. ${correct}`);
   return notes.join('<br>');
 }
+function answerNote(q){
+  const parts=[];
+  if(q.note) parts.push(`📌 ${escapeHtml(q.note)}`);
+  parts.push(memoryNote(q));
+  return parts.join('<br>');
+}
 function revealStudyAnswer(){
   if(examSession.active){ alert('線上模擬考為正式模式，作答前不可提前顯示答案。'); return; }
   if(!current) return;
   const r=document.getElementById('result');
   r.className='result show studyBox';
-  r.innerHTML=`<b>答案：${current.answer}. ${escapeHtml(current.options[['A','B','C','D'].indexOf(current.answer)]||'')}</b><br><span class="small">${memoryNote(current)}</span>`;
+  r.innerHTML=`<b>答案：${current.answer}. ${escapeHtml(current.options[['A','B','C','D'].indexOf(current.answer)]||'')}</b><br><span class="small">${answerNote(current)}</span>`;
   [...document.querySelectorAll('.opt')].forEach(btn=>{ const l=optChoice(btn); if(l===current.answer) btn.classList.add('correct'); });
 }
 
@@ -320,7 +326,6 @@ function render(){ const p=ensure(current.id); const mastered=(p.wrong||0)>0&&(p
   if(current.scenario){ qhtml += `<div class="scenario"><b>共用情境</b>${escapeHtml(current.scenario)}</div>`; }
   if(current.image){ qhtml += `<img class="qimg" src="${current.image}" alt="題目圖片">`; }
   qhtml += `<div>${escapeHtml(current.question)}</div>`;
-  if(current.note){ qhtml += `<div class="caption">📌 ${escapeHtml(current.note)}</div>`; }
   document.getElementById('question').innerHTML=qhtml;
   const box=document.getElementById('options'); box.innerHTML=''; ['A','B','C','D'].forEach((L,i)=>{ const b=document.createElement('button'); b.className='opt'; b.dataset.choice=L; b.textContent=`[${i+1}] ${L}. ${current.options[i]}`; b.onclick=()=>answer(L); box.appendChild(b); }); document.getElementById('result').className='result'; document.getElementById('result').innerHTML=''; document.getElementById('favBtn').textContent=p.fav?'[F] 取消收藏':'[F] 收藏'; if(document.getElementById('mode').value==='study'){ const r=document.getElementById('result'); r.className='result show studyBox'; r.innerHTML='背題模式：先在心裡作答，再按下方「顯示答案」。'; } const revealBtn=document.getElementById('revealBtn'); if(revealBtn) revealBtn.disabled=examSession.active; const retryBtn=document.getElementById('retryBtn'); if(retryBtn) retryBtn.disabled=examSession.active; const favBtn=document.getElementById('favBtn'); if(favBtn) favBtn.disabled=examSession.active; const nextBtn=document.getElementById('nextBtn'); if(nextBtn) nextBtn.disabled=false; const prevBtn=document.getElementById('prevBtn'); if(prevBtn) prevBtn.disabled=idx<=0; if(examSession.active && examSession.answers && examSession.answers[current.id]){ answered=true; renderExamReviewForCurrent(); const r=document.getElementById('result'); r.className='result show studyBox'; if(examSession.completed){ const ans=examSession.answers[current.id]; r.innerHTML=`本題回顧：你的答案 <b>${ans.choice}</b>，正確答案 <b>${current.answer}</b>。${ans.ok?'答對':'答錯'}`; } else { r.innerHTML=`本題已作答，目前選擇：<b>${examSession.answers[current.id].choice}</b>。<br><span class="small">線上模擬考進度：${examSession.answered} / ${examSession.total} 題。交卷前不顯示正解，也不寫入一般刷題紀錄。可在交卷前回上一題修改答案。</span>`; } } updateStats(); updateHotkeyHelp(); }
 function answer(L){ if(examSession.active && examSession.completed) return; if(!current) return;
@@ -339,7 +344,7 @@ function answer(L){ if(examSession.active && examSession.completed) return; if(!
   }
   if(answered) return;
   answered=true; const ok=L===current.answer;
-  const p=ensure(current.id); p.answered=(p.answered||0)+1; p.lastChoice=L; p.last=ok?'right':'wrong'; p.lastAt=new Date().toISOString(); if(ok){ p.right=(p.right||0)+1; p.streak=(p.streak||0)+1; } else { p.wrong=(p.wrong||0)+1; p.streak=0; } [...document.querySelectorAll('.opt')].forEach(btn=>{ const l=optChoice(btn); if(l===current.answer) btn.classList.add('correct'); if(l===L) btn.classList.add('chosen'); if(l===L&&!ok) btn.classList.add('wrong'); }); const r=document.getElementById('result'); r.className='result show '+(ok?'ok':'bad'); const mastered=(p.wrong||0)>0&&(p.streak||0)>=2; r.innerHTML= ok ? `答對了。答案：<b>${current.answer}</b>${mastered?'｜這題已從待複習錯題中解除。':''}` : `答錯了。你的答案：<b>${L}</b>，正確答案：<b>${current.answer}</b>｜已加入錯題追蹤。`; save(); }
+  const p=ensure(current.id); p.answered=(p.answered||0)+1; p.lastChoice=L; p.last=ok?'right':'wrong'; p.lastAt=new Date().toISOString(); if(ok){ p.right=(p.right||0)+1; p.streak=(p.streak||0)+1; } else { p.wrong=(p.wrong||0)+1; p.streak=0; } [...document.querySelectorAll('.opt')].forEach(btn=>{ const l=optChoice(btn); if(l===current.answer) btn.classList.add('correct'); if(l===L) btn.classList.add('chosen'); if(l===L&&!ok) btn.classList.add('wrong'); }); const r=document.getElementById('result'); r.className='result show '+(ok?'ok':'bad'); const mastered=(p.wrong||0)>0&&(p.streak||0)>=2; const noteHtml=`<br><span class="small">${answerNote(current)}</span>`; r.innerHTML= ok ? `答對了。答案：<b>${current.answer}</b>${mastered?'｜這題已從待複習錯題中解除。':''}${noteHtml}` : `答錯了。你的答案：<b>${L}</b>，正確答案：<b>${current.answer}</b>｜已加入錯題追蹤。${noteHtml}`; save(); }
 function retryQuestion(){ if(examSession.active){ alert('線上模擬考為正式模式，不可重答本題；請重新開始新一輪模擬考。'); return; } if(!current) return; answered=false; render(); }
 function toggleFav(){ if(examSession.active){ alert('線上模擬考正式模式不提供收藏，請在一般刷題模式使用收藏。'); return; } if(!current) return; const p=ensure(current.id); p.fav=!p.fav; save(); render(); }
 function resetCurrent(){ if(examSession.active){ alert('線上模擬考正式模式不可清除本題紀錄。'); return; } if(!current) return; if(confirm('清除本題作答紀錄？')){ delete progress[current.id]; save(); render(); } }
@@ -553,15 +558,7 @@ initCats(); startSession();
 src="https://static.cloudflareinsights.com/beacon.min.js"
 data-cf-beacon='{"token":"d560d5aa815e4488b522eb63c03bd44b1"}'></script>
 <!-- End Cloudflare Web Analytics -->
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<script>
-window.addEventListener("load", function(){
-  setTimeout(function(){
-    var pv = document.getElementById("busuanzi_value_site_pv");
-    if (pv && !pv.textContent.trim()) pv.textContent = "尚未載入";
-  }, 4000);
-});
-</script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
